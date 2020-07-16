@@ -41,7 +41,8 @@ int main(int argc, char *argv[])
         perror("bind");
         return 1;
     }
-    cout<< " checking" << endl;
+    
+    cout<< " checking address: "<< addr.sin_addr.s_addr << endl;
 
     // use setsockopt() to request that the kernel join a multicast group
     struct ip_mreq mreq;
@@ -57,20 +58,21 @@ int main(int argc, char *argv[])
     //
     while (1) {
         ClockSyncMessage message;
-        socklen_t addrlen = sizeof(addr);
+	struct sockaddr_in server_addr;
+        socklen_t addrlen = sizeof(server_addr);
         int nbytes = recvfrom(
             fd,
             &message,
             sizeof(message),
             0,
-            (struct sockaddr *) &addr,
+            (struct sockaddr *) & server_addr,
             &addrlen
         );
         if (nbytes < 0) {
             perror("recvfrom");
             return 1;
         }
-        cout <<" received one message from server, clock_id = " << message.clock_id << endl;
+        cout <<" received one message from server, clock_id = " << message.clock_id <<"|address=" <<server_addr.sin_addr.s_addr<< endl;
         
         message.clock_id = clientId;
         message.client_ts = get_current_time_ts();
@@ -81,8 +83,8 @@ int main(int argc, char *argv[])
 		    &message,
 		    sizeof(message),
 		    0,
-		    (struct sockaddr*) & addr,
-		    sizeof(addr)
+		    (struct sockaddr*) & server_addr,
+		    sizeof(server_addr)
 		    );
 	    if(nbytes <0){
 		perror("sendto");

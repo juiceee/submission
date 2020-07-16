@@ -23,7 +23,7 @@ public:
 	}
 	void sendMsg()
 	{
-        cout << "Address  : " << ADDRESS << endl;
+        cout << "Address  : " << ADDRESS <<"|socket address=" << groupSock.sin_addr.s_addr << endl;
 	    while(1){
             ClockSyncMessage msg;
 
